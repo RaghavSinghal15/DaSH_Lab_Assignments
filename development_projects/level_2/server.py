@@ -1,11 +1,10 @@
-import os
-import time
-import json
+from flask import Flask, request
+import time 
 from groq import Groq
 
 API_KEY = "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"
 client = Groq( api_key = API_KEY)
-
+app = Flask(__name__) 
 
 def getResp(prompt: str):
     timesent = time.time()
@@ -32,15 +31,20 @@ def getResp(prompt: str):
 
     return output
 
-f = open("./input.txt", "r") 
-prompts = f.readlines()
-f.close()
-outputs = []
+@app.route("/")
+def base():
+    p = request.args.get("prompt")
+    return "hello" + p 
 
-for prompt in prompts: 
-    output = getResp(prompt)
-    outputs.append(output)
+@app.route("/Llm")
+def prompt():
+    p = request.args.get("prompt")
+    return getResp(p)
 
-f = open("./output.json","w")
-json.dump(outputs,f,indent = 4)
-f.close()   
+    
+
+
+
+app.run(debug = True)
+
+
